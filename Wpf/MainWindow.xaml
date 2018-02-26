@@ -4,30 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wpf"
+        
         mc:Ignorable="d"
         Title="ChatPack" Height="Auto" Width="Auto" 
-        MinHeight="600" MinWidth="950" WindowState="Maximized">
-    <!--Grid for the layout-->
+        MinHeight="600" MinWidth="950" WindowState="Maximized"
+        >
+    <!--Icon="./Wpf/joy.png"-->
 
+    <Window.Resources>
+        <Image x:Key="SettingImg" Source="pack://siteoforigin:,,,/ButtonImage/zahnrad.jpg"/>
+        <Image x:Key="CallImg" Source="C:\Users\Stephan\Desktop\lsad\Wpf\ButtonImage\yoshi.png"/>
+
+        <Style x:Key="MyButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    
+    <!--Grid for the layout-->
     <!--<Grid Background="AntiqueWhite">-->
     <Grid Background="Green">
-        <!--<Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition />
-            <RowDefinition Height="8*"/>
-            <RowDefinition />
-        </Grid.RowDefinitions>
-
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="4*"/>
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>-->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
 
         <Grid>
@@ -50,31 +65,62 @@
                 </StackPanel>
 
             </Border>
-            
-            <ListView x:Name="friendsView" SelectionMode="Single"  Background="Crimson" MouseDown="friendsView_MouseDown" SelectionChanged="SelectFriend" Grid.Row="1">
-                <!--<ListViewItem>
-                    <StackPanel Orientation="Horizontal">
-                    <Ellipse Height="60" Width="60">
-                            <Ellipse.Fill>
-                                <ImageBrush/>
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <Border BorderThickness="5">
-                            <TextBlock FontSize="18" Foreground="WhiteSmoke" VerticalAlignment="Center" Text="User"/>
-                        </Border>
-                    </StackPanel>
-                </ListViewItem>-->
-            </ListView>
 
-            <Grid x:Name="Info" Grid.Row="1">
+            
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border BorderThickness="10">
+                    <TextBlock Text="Friendlist" FontSize="16" VerticalAlignment="Center"/>
+                </Border>
+                <Border BorderThickness="10">
+                    <Button x:Name="addBtn" Content="+" Width="30" Height="30" HorizontalAlignment="Right"/>
+                </Border>
+                <Popup x:Name="popUpTag" PlacementTarget="{Binding ElementName= addBtn}" Placement="Right">
+
+                    <StackPanel Grid.Column="2" Orientation="Vertical" Background="Beige" VerticalAlignment="Center">
+                        <Border BorderThickness="10">
+                            <TextBlock Width="200" Height="20" TextAlignment="Center" Text="Enter tag-number"/>
+                        </Border>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                            <Border BorderThickness="10">
+                                <TextBlock>#</TextBlock>
+                            </Border>
+                            <Border BorderThickness="10">
+                                <TextBox Width="100"></TextBox>
+                            </Border>
+                            <Border BorderThickness="10">
+                                <Button Content="Send"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                </Popup>
+
+
+                <ListView x:Name="friendsView" SelectionMode="Single" MouseDown="friendsView_MouseDown" SelectionChanged="SelectFriend"
+                          Background="Crimson" Grid.Row="1">
+                   
+                </ListView>
+                <Grid x:Name="Info" Grid.Row="1"/>
 
             </Grid>
 
-            <Button x:Name="btnSetting" Content="setting" Grid.Row="2" Margin="130,10,10,10" Click="Settings"/>
-            <Button Content="info" Grid.Row="2" Margin="10,10,130,10" Click="ShowUserInfo"/>
+
+            <Button x:Name="btnSetting" Content="{StaticResource SettingImg}" Grid.Row="2" Margin="160,10,30,10" 
+                    Click="Settings" Style="{StaticResource MyButton}">
+            </Button>
+
+
+            <Button Content="info" Grid.Row="2" Margin="30,10,160,10" Click="ShowUserInfo"/>
 
             <Popup x:Name="popUpSetting" PlacementTarget="{Binding ElementName= btnSetting}"
-                   Placement="Top" >
+                   Placement="Top" PopupAnimation="Scroll" AllowsTransparency="True">
                 <TextBlock Height="180" Width="200" Background="Aqua" >
                     <StackPanel Orientation="Vertical"  Margin="10">
                         <StackPanel Orientation="Horizontal">
@@ -94,13 +140,13 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Volume"/>
-                            <Slider Maximum="100" Width="130"/>
+                            <Slider Maximum="100" Width="130" />
                         </StackPanel>
                             
                     </StackPanel>
                 </TextBlock>
-
             </Popup>
+            
         </Grid>
 
         <Grid x:Name="curF_TextF_BG"  Grid.Column="1" Background="BlueViolet">
@@ -124,13 +170,13 @@
             <TextBlock Grid.Column="0" Grid.Row="1" Text="Online" VerticalAlignment="Top" Margin="20,0,0,0"/>
             <!--<StackPanel></StackPanel>-->
 
-            <Border  BorderThickness="10" Grid.Column="1" Grid.RowSpan="2">
-                <Button Content="Remove" Click="AddFriend" Height="50"/>
+            <Border BorderThickness="12" Grid.Column="1" Grid.RowSpan="2">
+                <Button Content="Remove"  Height="40" Width="60"/>
             </Border>
             <Border BorderThickness="10" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                <Button Content="Stats" Click="ShowStats" Height="50"/>
+                <Button Content="Stats" Click="ShowStats" Height="40" Width="60"/>
             </Border>
-            <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4" BorderThickness="10" >
+            <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4" BorderThickness="14" >
                 <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" 
                       Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4">
 
@@ -140,93 +186,23 @@
             </Border>
 
 
-            <Border Grid.Column="2" Grid.Row="3" BorderThickness="0,10,10,10">
+            <Border Grid.Column="2" Grid.Row="3" BorderThickness="0,14,0,14">
                 <Button Width="40" Content="Send" Click="SendBtn" />
             </Border>
-            <Border Grid.Column="3" Grid.Row="3" BorderThickness="0,10,10,10">
-                <Button Width="40" Content="Call"/>
+            <Border Grid.Column="3" Grid.Row="3" BorderThickness="0,14,0,14">
+                <Button Width="40" Content="{StaticResource CallImg}" Style="{StaticResource MyButton}"/>
             </Border>
 
             <!--<Grid Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Background="Cyan">
             </Grid> #457ad1-->
-            <Border  Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="10">
+            <Border  Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="14">
                 <TextBox x:Name="InputBox" TextAlignment="Left" VerticalContentAlignment="Center"
                     FontSize="22" KeyDown="OnKeyEnterHandler">
                 </TextBox>
             </Border>
 
         </Grid>
-        <!--Message area-->
-        <!--<StackPanel Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="8" Orientation="Horizontal">
-            <TextBlock x:Name="DateShow" 
-                       Width="Auto" FontSize="22" Background="White" />
-            
-            <TextBlock x:Name="InputShow"
-                       Width="Auto" FontSize="22" Background="White" />
-        </StackPanel>-->
-        <!-- date not working properly-->
-
-        <!-- <TextBlock x:Name="DateShow"  Grid.Column="1" Grid.Row="1"
-                       FontSize="22" Background="White" />
-        -->
-
-        <!--@
-        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                      Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="2">
-
-            <TextBlock x:Name="ShowInputBlock" FontSize="22" Background="white" FontFamily="Comic Sans MS"/>
-        </ScrollViewer>-->
-
-        <!--<Grid Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Background="Cyan">
-            </Grid> #457ad1-->
-
-        <!--Input area-->
-        <!--@<Border  Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="3"
-                 BorderThickness="10">
-
-            <TextBox x:Name="InputBox"
-                 Width="Auto" TextAlignment="Left" VerticalContentAlignment="Center"
-                  FontSize="22"
-                 KeyDown="OnKeyDownHandler">
-            </TextBox>
-        </Border>-->
-
-        <!-- Friendlist-->
-        <!--<ListBox x:Name="FriendBox" Grid.Column="0" Grid.Row="2" Grid.RowSpan="3"
-                 Grid.ColumnSpan="2"
-                 
-                  FontSize="18" Background="DodgerBlue" SelectionChanged="SelectFriend"
-                  />-->
-
-
-        <!--@<ListBox x:Name="FriendBox" Grid.Column="0" Grid.Row="2" Grid.RowSpan="2"
-                 Grid.ColumnSpan="2" FontSize="18" Background="DodgerBlue" SelectionChanged="SelectFriend">
-                <ListBoxItem>
-                    <TextBlock Text="Hasdj"/>
-
-                </ListBoxItem>
-            </ListBox>
-
-        -->
-
-
-
-        <!--@<Border Grid.Row="4" Grid.Column="1" BorderThickness="10">
-            <Button Click="Setting">
-                O
-            </Button>
-        </Border>-->
-
-        <!--<ListBox x:Name="ProfPicBox" Grid.Column="0" Grid.Row="2" Grid.RowSpan="3" 
-                  Background="DodgerBlue" Height="900" Width="200"/>-->
-
-        <!--<ListBoxItem Background="LightCoral" Foreground="Red"   
-             FontFamily="Verdana" FontSize="12" FontWeight="Bold">  
-    <StackPanel Orientation="Horizontal">  
-        <Image Source="coffie.jpg" Height="30"></Image>  
-        <TextBlock Text="Coffie"></TextBlock>  
-    </StackPanel>  
-</ListBoxItem> -->
+        <Grid Grid.Column="2" Background="BlueViolet"/>
     </Grid>
 
 </Window>

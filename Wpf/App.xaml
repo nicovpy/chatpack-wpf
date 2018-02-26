@@ -5,7 +5,4 @@
              StartupUri="MainWindow.xaml">
              <!--demoExample-->
              <!--MainWindow-->
-    <Application.Resources>
-         
-    </Application.Resources>
 </Application>

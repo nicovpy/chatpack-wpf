@@ -23,40 +23,6 @@ namespace Wpf
         {
             InitializeComponent();
 
-            ////http://www.wpf-tutorial.com/listview-control/listview-with-gridview/
-            //Bild.ItemsSource = list;
-            //Name.ItemsSource = listn;
-            //Kreis.ItemsSource = liste;
-
-            //< ListBoxItem >
-
-            //    < TextBlock >
-            //        < Image Source = "monkey.png" Height = "15" Width = "50" />
-
-            //             < Run > Text </ Run >
-
-            //         </ TextBlock >
-
-            //     </ ListBoxItem >
-
-
-            //List<TextBlock> list = new List<TextBlock>();
-            //TextBlock a = new TextBlock();
-            //a.Text = "asdada";
-
-            //list.Add(a);
-
-            //TextAndImage.ItemsSource = list;
-
-            List <User> items= new List<User>();
-
-            items.Add(new User("John"));
-            items.Add(new User("Symmy"));// { Name = "Jane Doe", Age = 39 });
-            items.Add(new User("kasdk"));// { Name = "Sammy Doe", Age = 13 });
-            TextAndImage.ItemsSource = items;
-
-
-
 
         }
     }

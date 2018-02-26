@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using Microsoft.Win32;
 
 namespace Wpf
 {
@@ -24,10 +19,12 @@ namespace Wpf
         private const int INFO_COLUMN = 5;
 
         private bool isInfoOn = false;
-        private bool isSettingOn = false;
         private TextBlock[] infoUserBlock = new TextBlock[INFO_COLUMN];
-        private List<User> friendsList = new List<User>();
+        //später wichtig
+        private List<User> friendlist = new List<User>();
+        //
         private SolidColorBrush BGcolor = new SolidColorBrush(Colors.BlueViolet);
+        private Button profBtn = new Button();
 
 
         public bool IsInfoOn
@@ -50,20 +47,67 @@ namespace Wpf
             curF_TextF_BG.Background = BGcolor;
 
             ImageBrush myBrush = new ImageBrush();
-            myBrush.ImageSource = new BitmapImage(new Uri(@"C:\Schule\3Klasse\syp\project\guiDemo\Wpf\ProfilePicture\smittyWerbenJaggerManJensen.jpg"));
-            myBrush.Stretch = Stretch.UniformToFill;
+            myBrush.ImageSource = new BitmapImage(new Uri("smittyWerbenJaggerManJensen.jpg",UriKind.Relative));
+            myBrush.Stretch = Stretch.UniformToFill;        //@"C:\Users\Stephan\Desktop\lsad\Wpf\ProfilePicture\smittyWerbenJaggerManJensen.jpg"
             ProfPic.Fill = myBrush;
             ProfPic.Height = 60;
             ProfPic.Width = 60;
 
             List<StackPanel> spList = new List<StackPanel>();
+
+
             popUpSetting.VerticalOffset = -btnSetting.ActualHeight;
             popUpSetting.HorizontalOffset = -btnSetting.ActualWidth;
 
             SetTBlockTitle();
-            FileRead("friends.txt");
-            CreateStackPFriend(spList);
+            //FileRead("friends.txt");
+            //CreateStackPFriend(spList);
+
+            CreateStackPItem("friends.txt", spList);
+
+
             friendsView.ItemsSource = spList;
+
+            addBtn.Click += TypeTagNumber;
+
+        }
+
+        private void CreateStackPItem(string path, List<StackPanel> spList)
+        {
+            StackPanel sp;
+            TextBlock tb;
+
+            string[] friendrow = File.ReadAllLines(path);
+            for (int i = 0; i < friendrow.Length; i++)
+            {
+                string[] elem = friendrow[i].Split(';');
+                User friend = new User(elem[0],elem[1]);
+
+                sp = new StackPanel();
+                sp.Orientation = Orientation.Horizontal;
+
+                tb = new TextBlock();
+                tb.FontSize = 20;
+                tb.Text = friend.Name;
+                tb.VerticalAlignment = VerticalAlignment.Center;
+
+                Image img = new Image();
+                img.Source = friend.Img;
+
+                img.Height = 60;
+                img.Width = 60;
+
+                sp.Children.Add(img);
+                sp.Children.Add(tb);
+                
+                spList.Add(sp);
+
+            }
+        }
+
+        private void TypeTagNumber(object sender, RoutedEventArgs e)
+        {
+            popUpTag.IsOpen = !popUpTag.IsOpen;
         }
         public void FileRead(string filepath)
         {
@@ -71,27 +115,23 @@ namespace Wpf
             for (int i = 0; i < friendRow.Length; i++)
             {
                 string[] elem = friendRow[i].Split(';');
-                User friend = new User(elem[0]);
-                friendsList.Add(friend);
-
-
-                //list.Add(friend.Name);
-
-                //imgList.Add(CreateEllipse(elem[1]));
+                User friend = new User(elem[0],elem[1]);
+                friendlist.Add(friend);
+               
             }
-            friendsList.Sort();
+            friendlist.Sort();
         }
         public void CreateStackPFriend(List<StackPanel> list)
         {
             StackPanel sp;
             TextBlock tb;
 
-            for (int i = 0; i < friendsList.Count; i++)
+            for (int i = 0; i < friendlist.Count; i++)
             {
                 sp = new StackPanel();
                 tb = new TextBlock();
                 tb.FontSize = 18;
-                tb.Text = friendsList[i].Name;
+                tb.Text = friendlist[i].Name;
                 sp.Children.Add(tb);
                 list.Add(sp);
             }
@@ -148,10 +188,6 @@ namespace Wpf
                 InputBox.Text = String.Empty;
             }
         }
-        public void AddFriend(object sender, RoutedEventArgs e)
-        {
-
-        }
         public void SelectFriend(object sender, SelectionChangedEventArgs e)
         {
             selectedFriend = friendsView.SelectedItem as StackPanel;
@@ -201,6 +237,7 @@ namespace Wpf
             
             if (!IsInfoOn)
             {
+                Info.Children.Clear();
                 Info.Children.Add(sp);
                 Info.Background = new SolidColorBrush(Colors.White);
                 IsInfoOn = true;
@@ -234,8 +271,7 @@ namespace Wpf
         }
         private void Settings(object sender, RoutedEventArgs e)
         {
-            isSettingOn = !isSettingOn;
-            popUpSetting.IsOpen = isSettingOn;
+            popUpSetting.IsOpen = !popUpSetting.IsOpen;
 
         }
         private void ShowStats(object sender, RoutedEventArgs e)
@@ -244,11 +280,33 @@ namespace Wpf
         }
         private void ChangeInformation(object sender, RoutedEventArgs e)
         {
-            isSettingOn = !isSettingOn;
-            popUpSetting.IsOpen = isSettingOn;
+            popUpSetting.IsOpen = !popUpSetting.IsOpen;
+            Info.Children.Clear();
+            Info.Background = new SolidColorBrush();
+            isInfoOn = false;
+
             
+            profBtn.Width = 70;
+            profBtn.Height = 70;
+            profBtn.VerticalAlignment = VerticalAlignment.Center;
+            profBtn.Content = "Change Image";
+            profBtn.Click += OpenFileDiaForImg;
+
+            Info.Children.Add(profBtn);
+
+
 
         }
+
+        private void OpenFileDiaForImg(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog fileDia = new OpenFileDialog();
+            if (fileDia.ShowDialog() == true)
+            {
+
+            }
+        }
+
         private void ChangeColor(object sender, RoutedEventArgs e)
         {
             BGcolor = new SolidColorBrush(Colors.Crimson);
@@ -271,10 +329,6 @@ namespace Wpf
 
         //    Image image = sender as Image;
         //    image.Source = b;
-        //}
-        //private void InputBox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-
         //}
     }
 }

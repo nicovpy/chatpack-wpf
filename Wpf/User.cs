@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Wpf
 {
     class User : IComparable<User>
     {
         private string _name;
-        public User(string name)
+        private BitmapImage _img;
+        public User(string name, string img)
         {
             _name = name;
+            _img = new BitmapImage(new Uri(@"C:\Users\Stephan\Desktop\lsad\Wpf\ProfilePicture\"+ img));
         }
 
         #region Prop
@@ -25,6 +28,19 @@ namespace Wpf
             set
             {
                 _name = value;
+            }
+        }
+
+        public BitmapImage Img
+        {
+            get
+            {
+                return _img;
+            }
+
+            set
+            {
+                _img = value;
             }
         }
         #endregion
