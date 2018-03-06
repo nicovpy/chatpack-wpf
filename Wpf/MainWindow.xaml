@@ -13,8 +13,8 @@
 
     <Window.Resources>
         <Image x:Key="SettingImg" Source="pack://siteoforigin:,,,/ButtonImage/zahnrad.jpg"/>
-        <Image x:Key="CallImg" Source="C:\Users\Stephan\Desktop\lsad\Wpf\ButtonImage\yoshi.png"/>
-
+        <Image x:Key="CallImg" Source="C:\Schule\3Klasse\syp\repositories\chatpack-wpf\Wpf\ButtonImage\yoshi.png"/>
+        <!--"C:\Users\Stephan\Desktop\lsad\Wpf\ButtonImage\yoshi.png"-->
         <Style x:Key="MyButton" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Cursor" Value="Hand" />
@@ -38,7 +38,7 @@
     
     <!--Grid for the layout-->
     <!--<Grid Background="AntiqueWhite">-->
-    <Grid Background="Green">
+    <Grid Background="#4286f4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
@@ -60,7 +60,8 @@
                         </Ellipse.Fill>
                     </Ellipse>
                     <Border BorderThickness="5">
-                        <TextBlock FontSize="18" Foreground="WhiteSmoke" VerticalAlignment="Center" Text="User"/>
+                        <TextBlock FontSize="18" Foreground="WhiteSmoke" 
+                                   VerticalAlignment="Center" Text="Smitty"/>
                     </Border>
                 </StackPanel>
 
@@ -103,7 +104,8 @@
                 </Popup>
 
 
-                <ListView x:Name="friendsView" SelectionMode="Single" MouseDown="friendsView_MouseDown" SelectionChanged="SelectFriend"
+                <ListView x:Name="friendsView" SelectionMode="Single" MouseDown="friendsView_MouseDown" 
+                          SelectionChanged="SelectFriend"
                           Background="Crimson" Grid.Row="1">
                    
                 </ListView>
@@ -121,7 +123,7 @@
 
             <Popup x:Name="popUpSetting" PlacementTarget="{Binding ElementName= btnSetting}"
                    Placement="Top" PopupAnimation="Scroll" AllowsTransparency="True">
-                <TextBlock Height="180" Width="200" Background="Aqua" >
+                <TextBlock Height="180" Width="200" Background="Transparent" >
                     <StackPanel Orientation="Vertical"  Margin="10">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Change color" VerticalAlignment="Center"/>
@@ -149,26 +151,30 @@
             
         </Grid>
 
-        <Grid x:Name="curF_TextF_BG"  Grid.Column="1" Background="BlueViolet">
+        <Grid x:Name="curF_TextF_Grid"  Grid.Column="1" Background="#1d55af">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
-
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="70"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
 
             <!--selected friend textblock ersetzen-->
-            <StackPanel x:Name="selectedFriend" Grid.Column="0" Grid.Row="0"  
-                        VerticalAlignment="Center"/>
-            <TextBlock Grid.Column="0" Grid.Row="1" Text="Online" VerticalAlignment="Top" Margin="20,0,0,0"/>
-            <!--<StackPanel></StackPanel>-->
+            <!--<StackPanel x:Name="selectedFriend" Grid.Column="0" Grid.Row="0"  
+                        VerticalAlignment="Center"/>-->
+            <!--<TextBlock x:Name="selectedFriend"/>
+            -->
+            <Grid x:Name="selFriendGrid" Grid.Column="0" Grid.Row="0"/>
+            
+            
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Status here" VerticalAlignment="Top" Margin="20,0,0,0"/>
+            <!--status zum stackpanel vom seletion hinzufügen -->
 
             <Border BorderThickness="12" Grid.Column="1" Grid.RowSpan="2">
                 <Button Content="Remove"  Height="40" Width="60"/>
@@ -201,8 +207,9 @@
                 </TextBox>
             </Border>
 
+            
         </Grid>
-        <Grid Grid.Column="2" Background="BlueViolet"/>
+        
     </Grid>
 
 </Window>

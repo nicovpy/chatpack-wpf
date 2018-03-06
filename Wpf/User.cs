@@ -15,8 +15,8 @@ namespace Wpf
         public User(string name, string img)
         {
             _name = name;
-            _img = new BitmapImage(new Uri(@"C:\Users\Stephan\Desktop\lsad\Wpf\ProfilePicture\"+ img));
-        }
+            _img = new BitmapImage(new Uri(@"C:\Users\stephan\Desktop\wp\Wpf\ProfilePicture\" + img));
+        }//C:\Users\Stephan\Desktop\lsad\Wpf\ProfilePicture
 
         #region Prop
         public string Name

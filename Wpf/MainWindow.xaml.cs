@@ -8,6 +8,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
+using LiveCharts;
+using LiveCharts.Wpf;
+using System.Media;
 
 namespace Wpf
 {
@@ -16,6 +19,8 @@ namespace Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        SoundPlayer plr = new SoundPlayer("oof.wav");
+
         private const int INFO_COLUMN = 5;
 
         private bool isInfoOn = false;
@@ -25,7 +30,6 @@ namespace Wpf
         //
         private SolidColorBrush BGcolor = new SolidColorBrush(Colors.BlueViolet);
         private Button profBtn = new Button();
-
 
         public bool IsInfoOn
         {
@@ -38,13 +42,16 @@ namespace Wpf
                 isInfoOn = value;
             }
         }
+
+        public object SeriersCollection { get; private set; }
+
         public MainWindow()
         {
             InitializeComponent();
 
             this.FontFamily = new FontFamily("Comic Sans MS");
 
-            curF_TextF_BG.Background = BGcolor;
+            curF_TextF_Grid.Background = BGcolor;
 
             ImageBrush myBrush = new ImageBrush();
             myBrush.ImageSource = new BitmapImage(new Uri("smittyWerbenJaggerManJensen.jpg",UriKind.Relative));
@@ -61,7 +68,6 @@ namespace Wpf
 
             SetTBlockTitle();
             //FileRead("friends.txt");
-            //CreateStackPFriend(spList);
 
             CreateStackPItem("friends.txt", spList);
 
@@ -87,17 +93,20 @@ namespace Wpf
                 sp.Orientation = Orientation.Horizontal;
 
                 tb = new TextBlock();
-                tb.FontSize = 20;
+                tb.FontSize = 16;
                 tb.Text = friend.Name;
                 tb.VerticalAlignment = VerticalAlignment.Center;
 
-                Image img = new Image();
-                img.Source = friend.Img;
+                Ellipse ellImg = new Ellipse();
+                ImageBrush imgBrush= new ImageBrush();
+                imgBrush.ImageSource = friend.Img;
+                imgBrush.Stretch = Stretch.UniformToFill;
+                ellImg.Fill = imgBrush;
+                ellImg.Height = 56;
+                ellImg.Width = 56;
 
-                img.Height = 60;
-                img.Width = 60;
-
-                sp.Children.Add(img);
+                
+                sp.Children.Add(ellImg);
                 sp.Children.Add(tb);
                 
                 spList.Add(sp);
@@ -109,6 +118,7 @@ namespace Wpf
         {
             popUpTag.IsOpen = !popUpTag.IsOpen;
         }
+        //löschen
         public void FileRead(string filepath)
         {
             string[] friendRow = File.ReadAllLines(filepath);
@@ -120,21 +130,6 @@ namespace Wpf
                
             }
             friendlist.Sort();
-        }
-        public void CreateStackPFriend(List<StackPanel> list)
-        {
-            StackPanel sp;
-            TextBlock tb;
-
-            for (int i = 0; i < friendlist.Count; i++)
-            {
-                sp = new StackPanel();
-                tb = new TextBlock();
-                tb.FontSize = 18;
-                tb.Text = friendlist[i].Name;
-                sp.Children.Add(tb);
-                list.Add(sp);
-            }
         }
         public Ellipse CreateEllipse(string imageName)
         {
@@ -190,10 +185,44 @@ namespace Wpf
         }
         public void SelectFriend(object sender, SelectionChangedEventArgs e)
         {
-            selectedFriend = friendsView.SelectedItem as StackPanel;
+            selFriendGrid.Children.Clear();
+            StackPanel tempSP;
+            StackPanel sp = new StackPanel();
+            sp.Orientation = Orientation.Horizontal;
+
+            TextBlock tb = new TextBlock();
+            tb.FontSize = 16;
+            Ellipse el = new Ellipse();
+            el.Width = 56;
+            el.Height = 56;
+
+            tempSP = (StackPanel)friendsView.SelectedItem;
+            if (tempSP == null)
+            {
+                return;
+            }
+
+            tb.Text = (tempSP.Children[1] as TextBlock).Text;
+            el.Fill = (tempSP.Children[0] as Ellipse).Fill;
+
+            sp.Children.Add(el);
+            sp.Children.Add(tb);
+
+
+            selFriendGrid.Children.Add(sp);
+
+
+           // curF_TextF_Grid.Children.Add();
+
+            //selectedFriend =
+            //ffrom child in stackPanel.Children (as stackpan
+
         }
         private void ShowUserInfo(object sender, RoutedEventArgs e)
         {
+            plr.Load();
+            plr.Play();
+
             //Grid newGrid = new Grid();
             //newGrid.Width = FriendBox.ActualWidth;
             //newGrid.HorizontalAlignment = HorizontalAlignment.Left;
@@ -271,15 +300,23 @@ namespace Wpf
         }
         private void Settings(object sender, RoutedEventArgs e)
         {
+          
             popUpSetting.IsOpen = !popUpSetting.IsOpen;
+
+            plr.Load();
+            plr.Play();
 
         }
         private void ShowStats(object sender, RoutedEventArgs e)
         {
-
+            plr.Load();
+            plr.Play();
         }
         private void ChangeInformation(object sender, RoutedEventArgs e)
         {
+            plr.Load();
+            plr.Play();
+
             popUpSetting.IsOpen = !popUpSetting.IsOpen;
             Info.Children.Clear();
             Info.Background = new SolidColorBrush();
@@ -315,6 +352,9 @@ namespace Wpf
 
         private void friendsView_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            plr.Load();
+            plr.Play();
+
             HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
             if (r.VisualHit.GetType() != typeof(ListBoxItem))
                 friendsView.UnselectAll();
