@@ -21,15 +21,20 @@ namespace Wpf
     {
         SoundPlayer plr = new SoundPlayer("oof.wav");
 
-        private const int INFO_COLUMN = 5;
+        private const int INFO_COLUMN = 6;
 
         private bool isInfoOn = false;
         private TextBlock[] infoUserBlock = new TextBlock[INFO_COLUMN];
         //später wichtig
         private List<User> friendlist = new List<User>();
         //
-        private SolidColorBrush BGcolor = new SolidColorBrush(Colors.BlueViolet);
+        private Color colorBlue = (Color)ColorConverter.ConvertFromString("#1d55af");
+        private Color colorViolet = (Color)ColorConverter.ConvertFromString("#63085d");
+        private SolidColorBrush bgColor = new SolidColorBrush();
+
+        private StackPanel sp = new StackPanel();
         private Button profBtn = new Button();
+                 
 
         public bool IsInfoOn
         {
@@ -42,43 +47,53 @@ namespace Wpf
                 isInfoOn = value;
             }
         }
-
         public object SeriersCollection { get; private set; }
-
         public MainWindow()
         {
             InitializeComponent();
 
+            
             this.FontFamily = new FontFamily("Comic Sans MS");
 
-            curF_TextF_Grid.Background = BGcolor;
+            bgColor.Color = colorBlue;
+            center_Grid.Background = bgColor;
 
             ImageBrush myBrush = new ImageBrush();
             myBrush.ImageSource = new BitmapImage(new Uri("smittyWerbenJaggerManJensen.jpg",UriKind.Relative));
             myBrush.Stretch = Stretch.UniformToFill;        //@"C:\Users\Stephan\Desktop\lsad\Wpf\ProfilePicture\smittyWerbenJaggerManJensen.jpg"
-            ProfPic.Fill = myBrush;
-            ProfPic.Height = 60;
-            ProfPic.Width = 60;
+            profPic.Fill = myBrush;
+            profPic.Height = 60;
+            profPic.Width = 60;
 
             List<StackPanel> spList = new List<StackPanel>();
-
 
             popUpSetting.VerticalOffset = -btnSetting.ActualHeight;
             popUpSetting.HorizontalOffset = -btnSetting.ActualWidth;
 
-            SetTBlockTitle();
+            SetTextTitles();
             //FileRead("friends.txt");
 
-            CreateStackPItem("friends.txt", spList);
-
-
+            CreateSPItem("friends.txt", spList);
             friendsView.ItemsSource = spList;
 
             addBtn.Click += TypeTagNumber;
 
-        }
+            btnBlue.IsEnabled = false;
 
-        private void CreateStackPItem(string path, List<StackPanel> spList)
+            //
+            sp = CreateUserInformation();
+            //
+        }
+        private Border CreateCenterButton(string text)
+        {
+            Border border = new Border();
+            border.BorderThickness = new Thickness(12);
+            Button btn = new Button();
+            btn.Content = text;
+            border.Child = btn;
+            return border;
+        }
+        private void CreateSPItem(string path, List<StackPanel> spList)
         {
             StackPanel sp;
             TextBlock tb;
@@ -113,7 +128,6 @@ namespace Wpf
 
             }
         }
-
         private void TypeTagNumber(object sender, RoutedEventArgs e)
         {
             popUpTag.IsOpen = !popUpTag.IsOpen;
@@ -144,21 +158,69 @@ namespace Wpf
 
             return pic;
         }
-        public void CreateUserInformation()
+        public StackPanel CreateUserInformation()
         {
-            //FileRead
+            TextBox tb1 = new TextBox();
+            tb1.Text = "Smitty";
+            tb1.IsEnabled = false;
+            //tb1.IsReadOnly = true;
+            StackPanel sp1 = new StackPanel();
+            sp1.Orientation = Orientation.Horizontal;
+            sp1.Children.Add(infoUserBlock[0]);
+            sp1.Children.Add(tb1);
+
+            TextBlock tb2 = new TextBlock();
+            tb2.Text = "#1841";
+            StackPanel sp2 = new StackPanel();
+            sp2.Orientation = Orientation.Horizontal;
+            sp2.Children.Add(infoUserBlock[1]);
+            sp2.Children.Add(tb2);
+
+            TextBlock tb3 = new TextBlock();
+            tb3.Text = "01.06.2017";
+            StackPanel sp3 = new StackPanel();
+            sp3.Orientation = Orientation.Horizontal;
+            sp3.Children.Add(infoUserBlock[2]);
+            sp3.Children.Add(tb3);
+
+            StackPanel sp = new StackPanel();
+            sp.Orientation = Orientation.Vertical;
+            sp.Margin = new Thickness(0, 100, 0, 0);
+            sp.Children.Add(sp1);
+            sp.Children.Add(sp2);
+            sp.Children.Add(sp3);
+
+            return sp;
         }
-        public void SetTBlockTitle()
+        private void ShowUserInfo(object sender, RoutedEventArgs e)
+        {
+            if (!IsInfoOn)
+            {
+                
+                //Info.Children.Clear();
+                Info.Children.Add(sp);
+                Info.Background = new SolidColorBrush(Colors.White);
+                IsInfoOn = true;
+            }
+            else
+            {
+                Info.Children.Clear();
+                Info.Background = new SolidColorBrush();
+                isInfoOn = false;
+            }
+        }
+        public void SetTextTitles()
         {
             for (int i = 0; i < INFO_COLUMN; i++)
             {
                 infoUserBlock[i] = new TextBlock();
             }
             infoUserBlock[0].Text = "Username: ";
-            infoUserBlock[1].Text = "Created since: ";
-            infoUserBlock[2].Text = "Friends amount: ";
-            infoUserBlock[3].Text = "Total messages sent: ";
-            infoUserBlock[4].Text = "Total messages received: ";
+            infoUserBlock[1].Text = "Tag-Number: ";
+            infoUserBlock[2].Text = "Created since: ";
+            infoUserBlock[3].Text = "Friends amount: ";
+            infoUserBlock[4].Text = "Total messages sent: ";
+            infoUserBlock[5].Text = "Total messages received:";
         }
         private void SendBtn(object sender, RoutedEventArgs e)
         {
@@ -196,108 +258,31 @@ namespace Wpf
             el.Width = 56;
             el.Height = 56;
 
+            Border remBtnBdr = new Border();
+            remBtnBdr = CreateCenterButton("Remove");
+            
+            Border statsBtnBdr = new Border();
+            statsBtnBdr = CreateCenterButton("Stats");
+            Grid.SetColumn(statsBtnBdr, 1);
+
             tempSP = (StackPanel)friendsView.SelectedItem;
             if (tempSP == null)
-            {
+            {    
+                remStatGrid.Children.Clear();
                 return;
             }
-
             tb.Text = (tempSP.Children[1] as TextBlock).Text;
             el.Fill = (tempSP.Children[0] as Ellipse).Fill;
 
             sp.Children.Add(el);
             sp.Children.Add(tb);
-
-
+            
             selFriendGrid.Children.Add(sp);
 
-
-           // curF_TextF_Grid.Children.Add();
-
-            //selectedFriend =
-            //ffrom child in stackPanel.Children (as stackpan
-
+            remStatGrid.Children.Add(remBtnBdr);
+            remStatGrid.Children.Add(statsBtnBdr);
         }
-        private void ShowUserInfo(object sender, RoutedEventArgs e)
-        {
-            plr.Load();
-            plr.Play();
-
-            //Grid newGrid = new Grid();
-            //newGrid.Width = FriendBox.ActualWidth;
-            //newGrid.HorizontalAlignment = HorizontalAlignment.Left;
-            //newGrid.VerticalAlignment = VerticalAlignment.Top;
-            //newGrid.ShowGridLines = true;
-            //newGrid.Background = new SolidColorBrush(Colors.Black);
-
-            //StackPanel[] stackpanels = new StackPanel[5];
-
-
-
-            //infoBlock.HorizontalAlignment = HorizontalAlignment.Center;
-            SetTBlockTitle();
-            TextBox tb1 = new TextBox();
-            tb1.Text = "Smitty";
-            //tb1.IsEnabled = false;
-            tb1.IsReadOnly = true;
-
-            StackPanel sp1 = new StackPanel();
-            sp1.Orientation = Orientation.Horizontal;
-            sp1.Children.Add(infoUserBlock[0]);
-            sp1.Children.Add(tb1);
-
-            //StackPanel bsp = new StackPanel();
-   
-            TextBlock tb2 = new TextBlock();
-            tb2.Text = "01.06.2017";
-
-            StackPanel sp2 = new StackPanel();
-            sp2.Orientation = Orientation.Horizontal;
-            sp2.Children.Add(infoUserBlock[1]);
-            sp2.Children.Add(tb2);
-
-            StackPanel sp = new StackPanel();
-
-            sp.Orientation = Orientation.Vertical;
-            sp.Margin = new Thickness(0, 100, 0, 0);
-            sp.Children.Add(sp1);
-            sp.Children.Add(sp2);
-            
-            
-            if (!IsInfoOn)
-            {
-                Info.Children.Clear();
-                Info.Children.Add(sp);
-                Info.Background = new SolidColorBrush(Colors.White);
-                IsInfoOn = true;
-            }
-            else
-            {
-                Info.Children.Clear();
-                Info.Background = new SolidColorBrush();
-                isInfoOn = false;
-            }
-            //Info.Background = new SolidColorBrush(Colors.Black);
-
-            //RowDefinition gridRow1 = new RowDefinition();
-
-            //gridRow1.Height = new GridLength(45);
-            //Info.RowDefinitions.Add(gridRow1);
-            //TextBlock txtBlock1 = new TextBlock();
-
-            //txtBlock1.Text = "Author Name";
-
-            //txtBlock1.FontSize = 14;
-
-            //txtBlock1.FontWeight = FontWeights.Bold;
-            //txtBlock1.VerticalAlignment = VerticalAlignment.Top;
-
-            //Grid.SetRow(txtBlock1, 0);
-
-            //Grid.SetColumn(txtBlock1, 0);
-            //Info.Children.Add(txtBlock1);
-            
-        }
+        
         private void Settings(object sender, RoutedEventArgs e)
         {
           
@@ -319,16 +304,17 @@ namespace Wpf
 
             popUpSetting.IsOpen = !popUpSetting.IsOpen;
             Info.Children.Clear();
-            Info.Background = new SolidColorBrush();
-            isInfoOn = false;
+            Info.Background = new SolidColorBrush(Colors.White);
+            IsInfoOn = true; ;
 
             
-            profBtn.Width = 70;
+            profBtn.Width = 100;
             profBtn.Height = 70;
             profBtn.VerticalAlignment = VerticalAlignment.Center;
             profBtn.Content = "Change Image";
             profBtn.Click += OpenFileDiaForImg;
-
+            
+            Info.Children.Add(sp);
             Info.Children.Add(profBtn);
 
 
@@ -338,22 +324,36 @@ namespace Wpf
         private void OpenFileDiaForImg(object sender, RoutedEventArgs e)
         {
             OpenFileDialog fileDia = new OpenFileDialog();
+
+            
+
+            fileDia.Filter = "Images (*.png, *.jpg)|*.png; *jpg";
             if (fileDia.ShowDialog() == true)
             {
-
+                ImageBrush temp = new ImageBrush();
+                temp.ImageSource = new BitmapImage(new Uri(fileDia.FileName));
+                profPic.Fill = temp;
             }
         }
 
         private void ChangeColor(object sender, RoutedEventArgs e)
         {
-            BGcolor = new SolidColorBrush(Colors.Crimson);
-            //curF_TextF_BG.Background = BGcolor;
+            if (sender.Equals(btnBlue))
+                bgColor.Color = colorBlue;
+            else
+                bgColor.Color = colorViolet;
+
+
+            btnBlue.IsEnabled = !btnBlue.IsEnabled;
+            btnVio.IsEnabled = !btnVio.IsEnabled;
+
+            center_Grid.Background = bgColor;
         }
 
         private void friendsView_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            plr.Load();
-            plr.Play();
+            //plr.Load();
+            //plr.Play();
 
             HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
             if (r.VisualHit.GetType() != typeof(ListBoxItem))
